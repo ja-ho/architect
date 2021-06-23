@@ -3,7 +3,7 @@ import java.util.Date;
 public class Video {
 	private String title ;
 
-  // Type Code - Enum ...
+	// Type Code - Enum ...
 	private int priceCode ;
 	public static final int REGULAR = 1 ;
 	public static final int NEW_RELEASE =2 ;
@@ -15,7 +15,7 @@ public class Video {
 
 	private Date registeredDate ;
 	private boolean rented ;
-	
+
 	public Video(String title, int videoType, int priceCode, Date registeredDate) {
 		this.setTitle(title) ;
 		this.setVideoType(videoType) ;
@@ -56,13 +56,6 @@ public class Video {
 		this.rented = rented;
 	}
 
-	public Date getRegisteredDate() {
-		return registeredDate;
-	}
-
-	public void setRegisteredDate(Date registeredDate) {
-		this.registeredDate = registeredDate;
-	}
 
 	public int getVideoType() {
 		return videoType;
@@ -80,4 +73,5 @@ public class Video {
 		}
 		return limit;
 	}
+
 }

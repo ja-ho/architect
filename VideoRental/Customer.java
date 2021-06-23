@@ -1,9 +1,10 @@
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class Customer {
 	private String name;
+	private double totalCharge;
+	private int totalPoint;
 
 	private List<Rental> rentals = new ArrayList<Rental>();
 
@@ -32,63 +33,40 @@ public class Customer {
 
 	}
 
-  // SRP violation - Long Method (Report Generate & Calculate)
+	// SRP violation - Long Method (Report Generate & Calculate)
 	// Divergent Change
 	// Feature Envy
 	//
+	private void calculateChargePoint() {
+		List<Rental> rentals = getRentals();
+
+		this.totalCharge = 0.0;
+		this.totalPoint  = 0;
+
+		for (Rental each : rentals) {
+
+			int daysRented = each.calculateDaysRented();
+			double eachCharge = each.calculateEachCharge(daysRented);
+			int eachPoint = each.calculateEachPoint(daysRented);
+
+			this.totalCharge += eachCharge;
+			this.totalPoint += eachPoint ;
+		}
+	}
+
 	public String getReport() {
 		String result = "Customer Report for " + getName() + "\n";
 
 		List<Rental> rentals = getRentals();
 
-		// SRP
-		double totalCharge = 0;
-		int totalPoint = 0;
+		calculateChargePoint();
 
-		// Move to ...
 		for (Rental each : rentals) {
-			double eachCharge = 0;
-			int eachPoint = 0 ;
-			int daysRented = 0;
-
-			// Duplication
-			if (each.getStatus() == 1) { // returned Video
-				long diff = each.getReturnDate().getTime() - each.getRentDate().getTime();
-				daysRented = (int) (diff / (1000 * 60 * 60 * 24)) + 1;
-			} else { // not yet returned
-				long diff = new Date().getTime() - each.getRentDate().getTime();
-				daysRented = (int) (diff / (1000 * 60 * 60 * 24)) + 1;
-			}
-			// Switch - ?
-			switch (each.getVideo().getPriceCode()) {
-			case Video.REGULAR:
-				eachCharge += 2;
-				if (daysRented > 2)
-					eachCharge += (daysRented - 2) * 1.5;
-				break;
-			case Video.NEW_RELEASE:
-				eachCharge = daysRented * 3;
-				break;
-			}
-
-			eachPoint++;
-
-			if ((each.getVideo().getPriceCode() == Video.NEW_RELEASE) )
-				eachPoint++;
-
-			if ( daysRented > each.getDaysRentedLimit() )
-				eachPoint -= Math.min(eachPoint, each.getVideo().getLateReturnPointPenalty()) ;
-
-			result += "\t" + each.getVideo().getTitle() + "\tDays rented: " + daysRented + "\tCharge: " + eachCharge
-					+ "\tPoint: " + eachPoint + "\n";
-
-			totalCharge += eachCharge;
-
-			totalPoint += eachPoint ;
+			result += "\t" + each.getVideo().getTitle() + "\tDays rented: " + each.getDaysRented() + "\tCharge: " + each.getCharge()
+					+ "\tPoint: " + each.getPoint() + "\n";
 		}
 
-		result += "Total charge: " + totalCharge + "\tTotal Point:" + totalPoint + "\n";
-
+		result += "Total charge: " + this.totalCharge + "\tTotal Point:" + this.totalPoint + "\n";
 
 		if ( totalPoint >= 10 ) {
 			System.out.println("Congrat! You earned one free coupon");
@@ -98,7 +76,6 @@ public class Customer {
 		}
 		return result ;
 	}
-
 	public void clearRentals() {
 		rentals.clear();
 	}
