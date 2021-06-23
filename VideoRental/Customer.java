@@ -98,4 +98,17 @@ public class Customer {
 		}
 		return result ;
 	}
+
+	public void clearRentals() {
+		rentals.clear();
+	}
+
+	void ListCustomerRentals() {
+		System.out.println("Name: " + getName() +
+				"\tRentals: " + rentals.size());
+		for (Rental rental : rentals) {
+			System.out.print("\tTitle: " + rental.getVideo().getTitle() + " ");
+			System.out.print("\tPrice Code: " + rental.getVideo().getPriceCode());
+		}
+	}
 }
